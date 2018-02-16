@@ -1,11 +1,12 @@
 package edu.berkeley.aep;
 
+// Understands how to compare measurements with a size and a unit
 public class Quantity {
-    private final int magnitude;
+    private final int size;
     private final Unit units;
 
-    public Quantity(int magnitude, Unit units) {
-        this.magnitude = magnitude;
+    public Quantity(int size, Unit units) {
+        this.size = size;
         this.units = units;
     }
 
@@ -14,6 +15,19 @@ public class Quantity {
         if (this == other) return true;
         if (!(other instanceof Quantity)) return false;
         Quantity otherQuantity = (Quantity) other;
-        return units.toBaseAmount(magnitude) == otherQuantity.units.toBaseAmount(otherQuantity.magnitude);
+        try {
+            return size == otherQuantity.convertTo(units).size;
+        } catch (RuntimeException exception) {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(size);
+    }
+
+    public Quantity convertTo(Unit other) {
+        return new Quantity(units.convertTo(other, size), other);
     }
 }
