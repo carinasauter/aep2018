@@ -30,4 +30,8 @@ public class Quantity {
     public Quantity convertTo(Unit other) {
         return new Quantity(units.convertTo(other, size), other);
     }
+
+    public Quantity add(Quantity other) {
+        return new Quantity(size + other.convertTo(units).size, units);
+    }
 }

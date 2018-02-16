@@ -45,4 +45,21 @@ public class QuantityTest {
     public void eightOzShouldEqualOneCupWithConvert() {
         assertEquals(new Quantity(8, Unit.OZ), new Quantity(1, Unit.CUP).convertTo(Unit.OZ));
     }
+
+    @Test
+    public void twoInchesPlusTwoInchesShouldBeFourInches() {
+        assertEquals(new Quantity(4, Unit.INCH),
+                new Quantity(2, Unit.INCH).add(new Quantity(2, Unit.INCH)));
+    }
+
+    @Test
+    public void twoTablespoonsPlusOneOzShouldEqual12Tsp() {
+        assertEquals(new Quantity(12, Unit.TSP),
+                new Quantity(2, Unit.TBSP).add(new Quantity(1, Unit.OZ)));
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void shouldNotBeAbleToAddInchesAndTeaspoons() {
+        new Quantity(1, Unit.INCH).add(new Quantity(1, Unit.TSP));
+    }
 }
