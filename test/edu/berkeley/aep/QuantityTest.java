@@ -62,4 +62,14 @@ public class QuantityTest {
     public void shouldNotBeAbleToAddInchesAndTeaspoons() {
         new Quantity(1, Unit.INCH).add(new Quantity(1, Unit.TSP));
     }
+
+    @Test
+    public void twoHundredTwelveCelsiusShouldEqual100Fahrenheit() {
+        assertEquals(new Quantity(212, Unit.FAHRENHEIT), new Quantity(100, Unit.CELSIUS));
+    }
+
+    @Test
+    public void thirtyTwoFahrenheitShouldEqualZeroCelsius() {
+        assertEquals(new Quantity(0, Unit.CELSIUS), new Quantity(32, Unit.FAHRENHEIT));
+    }
 }
