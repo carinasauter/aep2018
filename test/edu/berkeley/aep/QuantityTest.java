@@ -2,74 +2,97 @@ package edu.berkeley.aep;
 
 import org.junit.Test;
 
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 
 public class QuantityTest {
 
     @Test
     public void oneFootShouldEqualTwelveInches() {
-        assertEquals(new Quantity(1, Unit.FOOT), new Quantity(12, Unit.INCH));
+        assertEquals(new ScaledQuantity(1, Unit.FOOT), new ScaledQuantity(12, Unit.INCH));
     }
 
     @Test
     public void threeFeetShouldEqualOneYard() {
-        assertEquals(new Quantity(3, Unit.FOOT), new Quantity(1, Unit.YARD));
+        assertEquals(new ScaledQuantity(3, Unit.FOOT), new ScaledQuantity(1, Unit.YARD));
     }
 
     @Test
     public void oneMileShouldEqual1760Yard() {
-        assertEquals(new Quantity(1, Unit.MILE), new Quantity(1760, Unit.YARD));
+        assertEquals(new ScaledQuantity(1, Unit.MILE), new ScaledQuantity(1760, Unit.YARD));
     }
 
     @Test
     public void oneTablespoonShouldEqualThreeTeaspoons() {
-        assertEquals(new Quantity(1, Unit.TBSP), new Quantity(3, Unit.TSP));
+        assertEquals(new ScaledQuantity(1, Unit.TBSP), new ScaledQuantity(3, Unit.TSP));
     }
 
     @Test
     public void twoTablespoonsShouldEqualOneOz() {
-        assertEquals(new Quantity(2, Unit.TBSP), new Quantity(1, Unit.OZ));
+        assertEquals(new ScaledQuantity(2, Unit.TBSP), new ScaledQuantity(1, Unit.OZ));
     }
 
     @Test
     public void eightOzShouldEqualOneCup() {
-        assertEquals(new Quantity(8, Unit.OZ), new Quantity(1, Unit.CUP));
+        assertEquals(new ScaledQuantity(8, Unit.OZ), new ScaledQuantity(1, Unit.CUP));
     }
 
     @Test(expected = RuntimeException.class)
     public void oneTeaspoonShouldNotBeComparableToOneFoot() {
-        new Quantity(1, Unit.TSP).convertTo(Unit.FOOT);
+        new ScaledQuantity(1, Unit.TSP).convertTo(Unit.FOOT);
     }
 
     @Test
     public void eightOzShouldEqualOneCupWithConvert() {
-        assertEquals(new Quantity(8, Unit.OZ), new Quantity(1, Unit.CUP).convertTo(Unit.OZ));
+        assertEquals(new ScaledQuantity(8, Unit.OZ), new ScaledQuantity(1, Unit.CUP).convertTo(Unit.OZ));
     }
 
     @Test
     public void twoInchesPlusTwoInchesShouldBeFourInches() {
-        assertEquals(new Quantity(4, Unit.INCH),
-                new Quantity(2, Unit.INCH).add(new Quantity(2, Unit.INCH)));
+        assertEquals(new ScaledQuantity(4, Unit.INCH),
+                new ArithmeticQuantity(2, Unit.INCH).add(new ArithmeticQuantity(2, Unit.INCH)));
     }
 
     @Test
     public void twoTablespoonsPlusOneOzShouldEqual12Tsp() {
-        assertEquals(new Quantity(12, Unit.TSP),
-                new Quantity(2, Unit.TBSP).add(new Quantity(1, Unit.OZ)));
+        assertEquals(new ArithmeticQuantity(12, Unit.TSP),
+                new ArithmeticQuantity(2, Unit.TBSP).add(new ArithmeticQuantity(1, Unit.OZ)));
     }
 
     @Test(expected = RuntimeException.class)
     public void shouldNotBeAbleToAddInchesAndTeaspoons() {
-        new Quantity(1, Unit.INCH).add(new Quantity(1, Unit.TSP));
+        new ArithmeticQuantity(1, Unit.INCH).add(new ArithmeticQuantity(1, Unit.TSP));
     }
 
     @Test
     public void twoHundredTwelveCelsiusShouldEqual100Fahrenheit() {
-        assertEquals(new Quantity(212, Unit.FAHRENHEIT), new Quantity(100, Unit.CELSIUS));
+        assertEquals(new ScaledQuantity(212, Unit.FAHRENHEIT), new ScaledQuantity(100, Unit.CELSIUS));
     }
 
     @Test
     public void thirtyTwoFahrenheitShouldEqualZeroCelsius() {
-        assertEquals(new Quantity(0, Unit.CELSIUS), new Quantity(32, Unit.FAHRENHEIT));
+        assertEquals(new ScaledQuantity(0, Unit.CELSIUS), new ScaledQuantity(32, Unit.FAHRENHEIT));
+    }
+
+    @Test
+    public void tenCelsiusShouldBeBetterThanThirtyTwoFahrenheit() {
+        assertTrue(new ScaledQuantity(10, Unit.CELSIUS).betterThan(new ScaledQuantity(32, Unit.FAHRENHEIT)));
+    }
+
+    @Test
+    public void shouldReturnHighestQuantity() {
+        ArithmeticQuantity oneInch = new ArithmeticQuantity(1, Unit.INCH);
+        ArithmeticQuantity oneFoot = new ArithmeticQuantity(1, Unit.FOOT);
+        ArithmeticQuantity oneYard = new ArithmeticQuantity(1, Unit.YARD);
+        List<ArithmeticQuantity> toSort = new ArrayList<>();
+        toSort.add(oneInch);
+        toSort.add(oneFoot);
+        toSort.add(oneYard);
+        Bester bester = new Bester(toSort);
+        assertEquals(oneYard, bester.best());
     }
 }
